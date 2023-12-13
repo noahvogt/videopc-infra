@@ -1,7 +1,6 @@
 # adding some colors to the world
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
-alias ccat='highlight --out-format=ansi' # like cat, but w/ syntax highlighting
 alias diff='diff --color=auto'
 
 # human readable pls
@@ -27,39 +26,12 @@ alias .....='cd ../../../..'
 alias vim='nvim'
 alias v='vim'
 
-
 # safety features
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
 
-# git aliases
-alias gsetkey="git config --add --local core.sshCommand \'ssh -i \$GIT_SSH_KEY\'"
-alias clone="git clone -c core.sshCommand='/usr/bin/ssh -i \$GIT_SSH_KEY'"
-alias gs='git status'
-alias gd='git diff'
-alias gr='git remote -v'
-alias add='git add'
-alias commit='git commit'
-alias fetch='git fetch'
-alias pull='git pull'
-alias push='git push'
-alias log='git log'
-alias remote='git remote'
-alias tag='git tag'
-alias checkout='git checkout'
-alias merge='git merge'
-alias branch='git branch'
-alias lsc='git log --graph --oneline --decorate --all'
-alias lsb="git log --graph --simplify-by-decoration --pretty=format:'%d' --all"
-alias lst="git log --graph --decorate --all --date=short --abbrev-commit --oneline --pretty=format:'%h%x09%an%x09%ad%x09%s'"
-
-# sane ytdl shortcuts
-alias yt="youtube-dl --add-metadata -i"
-alias yta="yt -x -f bestaudio/best/140"
-alias ytas='yta "$(paste | sed "s/\?.*$//")"'
-
-alias loc='find -type f | grep -v "^./.git" | xargs wc -l | sort -h'
+alias loc='find -type f | grep -v "^./.git\|LICENSE\|^.*\.md" | xargs wc -l | sort -h'
 
 # fast dir switching
 s() {
