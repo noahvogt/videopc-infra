@@ -1,0 +1,19 @@
+#!/bin/bash
+
+devices="$(v4l2-ctl --list-devices)"
+
+if echo "$devices" | grep -q "^Cam Link"; then
+    device="Cam Link"
+else
+    device="USB Video"
+fi
+
+possible_streams="$(v4l2-ctl --list-devices | grep "^$device" -A 20 | \
+                    grep "^\s*/dev/" | sed 's/^\s*//')"
+
+[ -z "$possible_streams" ] && exit
+
+while IFS= read -r stream; do
+    doas v4l2-ctl --device="$stream" --all | grep -q "^Video input" &&
+    echo "$stream" && exit
+done <<< "$possible_streams"

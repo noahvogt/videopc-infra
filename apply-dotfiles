@@ -1,0 +1,4 @@
+#!/bin/sh
+
+stow --verbose --dotfiles --target="$HOME"/.config dot-config
+stow --verbose --dotfiles --target="$HOME"/.local/bin local-bin

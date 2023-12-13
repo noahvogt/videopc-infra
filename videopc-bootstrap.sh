@@ -174,7 +174,7 @@ if [ ! -d /home/"$username"/.local/src/dotfiles ]; then
     echo -e "\e[0;30;34mFetching dotfiles ...\e[0m"
     cd_into /home/"$username"/.local/src
     while true; do
-        git clone https://git.noahvogt.com/noah/videopc-dotfiles.git && break
+        git clone https://git.noahvogt.com/noah/videopc-infra.git && break
     done
 else
     echo -e "\e[0;30;34mUpdating dotfiles ...\e[0m"
@@ -183,7 +183,7 @@ else
         git pull && break
     done
 fi
-mv /home/"$username"/.local/src/videopc-dotfiles /home/"$username"/.local/src/dotfiles
+mv /home/"$username"/.local/src/videopc-infra /home/"$username"/.local/src/dotfiles
 cd_into /home/"$username"/.local/src/dotfiles
 echo -e "\e[0;30;34mApplying dotfiles ...\e[0m"
 doas -u "$username" /home/"$username"/.local/src/dotfiles/apply-dotfiles

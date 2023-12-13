@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cd "$HOME"/.local/bin || exit 1
+uvicorn videopc_api:api --host "$(~/.local/bin/internal-ip)" | logger -p 1

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# script to display the internal ip of the current connected network
+
+ip a | grep "inet 192" | tr '/' ' ' | awk '{print $2}'
