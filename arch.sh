@@ -12,29 +12,23 @@ DRIVE=$(cat drive)
 PVALUE=$(echo "${DRIVE}" | grep "^nvme" | sed 's/.*[0-9]/p/')
 
 cat <<EOF | fdisk -W always /dev/"${DRIVE}"
+o
+n
 p
-g
-n
-
-
-+1024M
-t
-1
-n
 
 
 
+a
 w
 EOF
 partprobe
 
-mkfs.vfat -F32 /dev/"${DRIVE}${PVALUE}"1
-yes | mkfs.ext4 /dev/"${DRIVE}"2
-mount /dev/"${DRIVE}"2 /mnt
+yes | mkfs.ext4 /dev/"${DRIVE}${PVALUE}"1
+mount /dev/"${DRIVE}${PVALUE}"1 /mnt
 
 pacman -Sy --noconfirm archlinux-keyring
 
-pacstrap /mnt base linux linux-firmware networkmanager rsync grub efibootmgr
+pacstrap /mnt base linux linux-firmware networkmanager rsync grub
 
 genfstab -U /mnt >> /mnt/etc/fstab
 mv drive /mnt
