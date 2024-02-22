@@ -21,11 +21,13 @@ locale-gen
 
 systemctl enable NetworkManager
 
+mkdir -p /efi
 mount /dev/"$DRIVE"1 /efi
+mkdir -p /efi/EFI/Linux
 test -d /efi/EFI || error_exit "Error: EFI partition could not be mounted correctly."
 
 echo "loglevel=0 quiet udev.log_level=3" > /etc/kernel/cmdline
-chmod /etc/kernel/cmdline
+chmod +w /etc/kernel/cmdline
 
 sb_status="$(sbctl status)"
 echo "$sb_status" | grep "^Setup Mode:" | grep -q "Enabled" || error_exit "Error: Secure Boot not in Setup Mode. Please chane UEFI settings."

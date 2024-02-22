@@ -32,12 +32,12 @@ p
 
 
 
-a
+p
 w
 EOF
 partprobe
 
-mkfs.vfat -F32 /dev/"${DRIVE}${PVALUE}"1
+mkfs.fat -F32 /dev/"${DRIVE}${PVALUE}"1
 yes | mkfs.ext4 /dev/"${DRIVE}${PVALUE}"2
 mount /dev/"${DRIVE}${PVALUE}"2 /mnt
 
