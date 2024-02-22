@@ -1,8 +1,0 @@
-# setting basic variables
-export EDITOR=nvim
-export VISUAL=nvim
-export PATH=$PATH:~/.local/bin
-export SHELL=/bin/zsh
-
-# ~/ cleanup
-export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"

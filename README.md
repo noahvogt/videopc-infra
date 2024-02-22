@@ -1,0 +1,21 @@
+## Security Considerations
+
+- boot security
+    - add BIOS password
+    - use motherboard with TPM2.0 and BIOS password not stored in volatile memory
+    - use secure boot
+    - use full disk encryption with TPM keys
+    - disable unneeded device ports in BIOS
+- prevent user input
+    - blacklist all HID modules
+        - usb
+        - serial decies /dev/tty* (or more fine-grained) using a udev rule
+    - disable unneeded device ports in software
+- prevent leakage through network
+    - use https
+        - use a self-signed certificate as to not worry about expiration
+    - use firewall to block all ports except the two needed
+- vulnerabilty exploits
+    - reduce software stack
+    - apply some hardening
+    - add update schedule

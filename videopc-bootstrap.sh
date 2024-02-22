@@ -52,16 +52,6 @@ create_videopc_user() {
     done
 }
 
-choose_user() {
-    echo -e "\e[0;30;46m Available users: \e[0m"
-    ls /home
-    while true; do
-    echo -e "\e[0;30;42m Enter in your chosen user \e[0m"
-    read -rp " >>> " username
-        ls /home/ | grep -q "^$username$" && break
-    done
-}
-
 set_rtmp_key() {
     echo -e "\e[0;30;34mSetting rtmp key... \e[0m"
     while true; do
@@ -87,23 +77,6 @@ add_user_to_groups() {
         echo -e "\e[0;30;34mAdding $username to video and input groups ... \e[0m"
         usermod -aG video "$username"
         usermod -aG input "$username"
-    fi
-}
-
-ensure_history_file_exists() {
-    if ! [ -f /home/"$username"/.cache/zsh/history ]; then
-        echo -e "\e[0;30;34mEnsuring initial zsh history file exists ...\e[0m"
-        mkdir -vp /home/"$username"/.cache/zsh
-        touch /home/"$username"/.cache/zsh/history
-    fi
-}
-
-
-change_login_shell_to_zsh() {
-    if ! grep "^$username.*::/home/$username" /etc/passwd | sed 's/^.*://' | \
-        grep -q "^$(which zsh)$"; then
-        echo -e "\e[0;30;34mSetting default shell to $(which zsh)...\e[0m"
-        chsh -s "$(which zsh)" "$username" || exit 1
     fi
 }
 
@@ -194,26 +167,17 @@ set_api_key
 # download packages from the official repos
 # TODO: remove uneeded pkg's
 echo -e "\e[0;30;34mInstalling packages from repos ...\e[0m"
-pacman -S --noconfirm --needed xf86-video-vesa xf86-video-fbdev neovim ffmpeg arandr man-db python mediainfo pulseaudio-alsa ttf-linux-libertine noto-fonts-emoji xorg-setxkbmap dash neofetch htop wireless_tools mpv xorg-xinput cpupower zsh zsh-syntax-highlighting powertop zsh-autosuggestions xf86-video-amdgpu xf86-video-intel xf86-video-nouveau fzf dust lf ttf-jetbrains-mono-nerd foliate coreutils curl xorg-xrandr webp-pixbuf-loader wireplumber hyprland-git ttf-space-mono-nerd kitty opendoas-sudo adwaita-fake-cursors greetd-agreety openssh uvicorn python-fastapi wlr-randr || pacman_error_exit
+pacman -S --noconfirm --needed xf86-video-vesa xf86-video-fbdev neovim ffmpeg arandr python pulseaudio-alsa neofetch mpv xf86-video-amdgpu xf86-video-intel xf86-video-nouveau dust coreutils curl webp-pixbuf-loader wireplumber hyprland kitty opendoas-sudo adwaita-fake-cursors greetd-agreety openssh uvicorn python-fastapi || pacman_error_exit
 
 # install aur packages
 echo -e "\e[0;30;34mInstalling packages from AUR ...\e[0m"
-doas -u "$username" paru -S --noconfirm --needed dashbinsh doasedit mediamtx-bin || pacman_error_exit
+doas -u "$username" paru -S --noconfirm --needed doasedit mediamtx-bin || pacman_error_exit
 
 # enable mediamtx service
 echo -e "\e[0;30;34mEnabling mediamtx daemon ...\e[0m"
 systemctl enable mediamtx
 
-# set global zshenv
-echo -e "\e[0;30;34mSetting global zshenv ...\e[0m"
-mkdir -vp /etc/zsh
-echo "export ZDOTDIR=\$HOME/.config/zsh" > /etc/zsh/zshenv
-
-ensure_history_file_exists
-
 make_user_owner_of_HOME_and_mnt_dirs
-
-change_login_shell_to_zsh
 
 # setup autologin
 echo -e "\e[0;30;34mSetting up Autologin ...\e[0m"

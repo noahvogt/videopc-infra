@@ -6,7 +6,7 @@ from fastapi import FastAPI
 
 api = FastAPI()
 
-with open("/etc/videopc_api_key", "r") as api_file_reader:
+with open("/etc/videopc_api_key", "r", encoding="utf-8") as api_file_reader:
     SECRET = api_file_reader.read().strip()
 
 
