@@ -109,7 +109,7 @@ if ! grep -q "^\s*\[xdg-repo\]\s*$" /etc/pacman.conf; then
     pacman-key --recv-keys 7FA7BB604F2A4346 --keyserver keyserver.ubuntu.com
     pacman-key --lsign-key 7FA7BB604F2A4346
     echo "[xdg-repo]
-Server = https://git.noahvogt.com/noah/\$repo/raw/master/\$arch" >> /etc/pacman.conf
+Server = https://noahvogt.com/\$repo/\$arch" >> /etc/pacman.conf
 fi
 
 # add chaotic-aur
@@ -121,25 +121,6 @@ if ! grep -q "^\s*\[chaotic-aur\]\s*$" /etc/pacman.conf; then
     pacman -U --noconfirm --needed 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
     echo "[chaotic-aur]
 Include = /etc/pacman.d/chaotic-mirrorlist" >> /etc/pacman.conf
-fi
-
-# sync all pkg db's
-pacman -Syyy
-
-# install aur helper (paru)
-if ! pacman -Q | grep -q paru; then
-    echo -e "\e[0;30;34mInstalling AUR helper (paru) ...\e[0m"
-    cd_into /home/"$username"/.local/src
-    pacman -S --noconfirm --needed bat devtools || pacman_error_exit
-    curl -sO https://aur.archlinux.org/cgit/aur.git/snapshot/paru-bin.tar.gz &&
-    tar xvf paru-bin.tar.gz
-    cd_into /home/"$username" && chown -R "$username":wheel /home/"$username"/.local/src/ && cd_into .local/src
-    cd_into paru-bin
-    while true; do
-        # TODO: split command into makepkg and pacman -U, only loop 2nd one
-        doas -u "$username" makepkg --noconfirm -si && break
-    done
-    rm /home/"$username"/.local/src/paru-bin.tar.gz
 fi
 
 # fetch + apply dotfiles
@@ -165,13 +146,12 @@ set_rtmp_key
 set_api_key
 
 # download packages from the official repos
-# TODO: remove uneeded pkg's
 echo -e "\e[0;30;34mInstalling packages from repos ...\e[0m"
-pacman -S --noconfirm --needed xf86-video-vesa xf86-video-fbdev neovim ffmpeg arandr python pulseaudio-alsa neofetch mpv xf86-video-amdgpu xf86-video-intel xf86-video-nouveau dust coreutils curl webp-pixbuf-loader wireplumber hyprland kitty opendoas-sudo adwaita-fake-cursors greetd-agreety openssh uvicorn python-fastapi || pacman_error_exit
+pacman -Sy --noconfirm --needed neovim ffmpeg pulseaudio-alsa mpv xf86-video-amdgpu xf86-video-intel xf86-video-nouveau coreutils curl hyprland kitty opendoas-sudo adwaita-fake-cursors greetd-agreety openssh uvicorn python-fastapi paru || pacman_error_exit
 
 # install aur packages
 echo -e "\e[0;30;34mInstalling packages from AUR ...\e[0m"
-doas -u "$username" paru -S --noconfirm --needed doasedit mediamtx-bin || pacman_error_exit
+doas -u "$username" paru -S --noconfirm --needed mediamtx-bin || pacman_error_exit
 
 # enable mediamtx service
 echo -e "\e[0;30;34mEnabling mediamtx daemon ...\e[0m"
