@@ -28,7 +28,7 @@ test -d /efi/EFI || error_exit "Error: EFI partition could not be mounted correc
 sed -i 's/block filesystems/block encrypt filesystems/' /etc/mkinitcpio.conf
 mkinitcpio -p linux
 
-root_uuid="$(grep UUID /etc/fstab | sed 's/^UUID=//; s/\s\/.*$//')"
+root_uuid="$(grep ext4 /etc/fstab | sed 's/^UUID=//; s/\s\/.*$//')"
 
 echo "BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=$root_uuid rw cryptdevice=/dev/sda2:cryptroot loglevel=0 quiet udev.log_level=3" > /etc/kernel/cmdline
 chmod +w /etc/kernel/cmdline
