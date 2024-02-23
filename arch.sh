@@ -55,6 +55,7 @@ cp chroot.sh /mnt
 arch-chroot /mnt bash chroot.sh
 rm /mnt/chroot.sh
 
+exit
 cp videopc-bootstrap.sh /mnt
 arch-chroot /mnt bash videopc-bootstrap.sh
 rm /mnt/videopc-bootstrap.sh

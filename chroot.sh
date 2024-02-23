@@ -21,7 +21,7 @@ locale-gen
 
 systemctl enable NetworkManager
 
-mount /dev/"$DRIVE"1 /efi
+# mount /dev/"$DRIVE"1 /efi
 # mkdir -p /efi/EFI/Linux
 # test -d /efi/EFI || error_exit "Error: EFI partition could not be mounted correctly."
 
