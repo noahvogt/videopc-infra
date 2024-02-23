@@ -6,30 +6,38 @@
 # - ~10 GB of free disk space
 # working 1.) base 2.) linux/kernel packages
 
-# install git, vim, stow, opendoas and (base-devel minus sudo)
-echo -e "\e[0;30;34mInstalling some initial packages ...\e[0m"
-pacman -Sy --noconfirm --needed git vim opendoas autoconf automake binutils bison fakeroot file findutils flex gawk gcc gettext grep groff gzip libtool m4 make pacman patch pkgconf sed texinfo which libxft stow || { echo -e "\e[0;30;101m Error at script start:\n\nAre you sure you're running this as the root user?\n\t(Tip: run 'whoami' to check)\n\nAre you sure you have an internet connection?\n\t(Tip: run 'ip a' to check)\n\e[0m"; exit 1; }
-
-pacman_error_exit() {
-    echo -e "\e[0;30;101m Error: Pacman command was not successfull. Exiting ...\e[0m"
+error_exit() {
+    echo -e "\e[0;30;101m $1\e[0m"
     exit 1
 }
 
-compile_error_exit() {
-    echo -e "\e[0;30;101m Error: Compilation command was not successfull. Exiting ...\e[0m"
-    exit 1
+pacman_error_exit() {
+    error_exit "Error: Pacman command was not successfull. Exiting ..."
+}
+
+cd_error_exit() {
+    echo -e "\e[0;30;46m Current working directory: \e[0m"
+    pwd
+    error_exit "\e[0;30;101m Error: Could not change into '$1'. Exiting ...\e[0m"
 }
 
 cd_into() {
     cd "$1" || cd_error_exit "$1"
 }
 
-cd_error_exit() {
-    echo -e "\e[0;30;46m Current working directory: \e[0m"
-    pwd
-    echo -e "\e[0;30;101m Error: Could not change into '$1'. Exiting ...\e[0m"
-    exit 1
-}
+sb_status="$(sbctl status)"
+echo "$sb_status" | grep "^Setup Mode:" | grep -q "Disabled" || error_exit "Error: Secure Boot in Setup Mode. Please change UEFI settings."
+echo "$sb_status" | grep "^Secure Boot:" | grep -q "Enabled" || error_exit "Error: Secure Boot disabled. Please change UEFI settings."
+echo "$sb_status" | grep "^Vendor Keys:" | grep -q "none" || error_exit "Error: Vendor Keys present. Please change UEFI settings."
+
+grep -q "^2$" /sys/class/tpm/tmp*/tpm_version_major || error_exit "Error: No tpm2 devices found."
+
+systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+7 /dev/sda2 || error_exit "Error: Failed to enroll luks2 key into tpm2"
+
+# install git, vim, stow, opendoas and (base-devel minus sudo)
+echo -e "\e[0;30;34mInstalling some initial packages ...\e[0m"
+pacman -Sy --noconfirm --needed git vim opendoas autoconf automake binutils bison fakeroot file findutils flex gawk gcc gettext grep groff gzip libtool m4 make pacman patch pkgconf sed texinfo which libxft stow || error_exit "Error at script start:\n\nAre you sure you're running this as the root user?\n\t(Tip: run 'whoami' to check)\n\nAre you sure you have an internet connection?\n\t(Tip: run 'ip a' to check)\n\e[0m"
+
 
 setup_temporary_doas() {
     echo -e "\e[0;30;34mSetting up temporary doas config ...\e[0m"

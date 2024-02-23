@@ -39,7 +39,7 @@ partprobe
 mkfs.fat -F32 /dev/"$DRIVE"1
 
 while true; do
-    cryptsetup luksFormat --type luks1 /dev/"$DRIVE"2 && break
+    cryptsetup luksFormat --type luks2 /dev/"$DRIVE"2 && break
 done
 
 while true; do
@@ -53,7 +53,7 @@ mount /dev/"$DRIVE"1 /mnt/efi
 
 pacman -Sy --noconfirm archlinux-keyring
 
-pacstrap /mnt base linux networkmanager sbctl amd-ucode efibootmgr cryptsetup
+pacstrap /mnt base linux networkmanager sbctl amd-ucode efibootmgr cryptsetup tmp2-tss
 
 genfstab -U /mnt >> /mnt/etc/fstab
 mv drive /mnt
@@ -63,7 +63,4 @@ cp chroot.sh /mnt
 arch-chroot /mnt bash chroot.sh
 rm /mnt/chroot.sh
 
-exit
-cp videopc-bootstrap.sh /mnt
-arch-chroot /mnt bash videopc-bootstrap.sh
-rm /mnt/videopc-bootstrap.sh
+cp stage2.sh /mnt

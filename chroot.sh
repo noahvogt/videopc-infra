@@ -3,8 +3,8 @@
 error_exit() {
     echo "$1"
     exit 1
-
 }
+
 while true; do
     passwd && break
 done
@@ -34,8 +34,8 @@ echo "BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=$root_uuid rw cryptdevice=/dev/sd
 chmod +w /etc/kernel/cmdline
 
 sb_status="$(sbctl status)"
-echo "$sb_status" | grep "^Setup Mode:" | grep -q "Enabled" || error_exit "Error: Secure Boot not in Setup Mode. Please chane UEFI settings."
-echo "$sb_status" | grep "^Secure Boot:" | grep -q "Disabled" || error_exit "Error: Secure Boot enabled. Please chane UEFI settings."
+echo "$sb_status" | grep "^Setup Mode:" | grep -q "Enabled" || error_exit "Error: Secure Boot not in Setup Mode. Please change UEFI settings."
+echo "$sb_status" | grep "^Secure Boot:" | grep -q "Disabled" || error_exit "Error: Secure Boot enabled. Please change UEFI settings."
 echo "$sb_status" | grep "^Vendor Keys:" | grep -q "none" || error_exit "Error: Vendor Keys present. Please change UEFI settings."
 
 sbctl bundle -s \
@@ -47,7 +47,7 @@ sbctl bundle -s \
 
 sbctl create-keys
 sbctl generate-bundles --sign
-sbctl enroll-keys -m
+sbctl enroll-keys
 
 efibootmgr --create \
     --disk /dev/"$DRIVE" \
