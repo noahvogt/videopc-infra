@@ -40,6 +40,8 @@ partprobe
 mkfs.fat -F32 /dev/"${DRIVE}${PVALUE}"1
 yes | mkfs.ext4 /dev/"${DRIVE}${PVALUE}"2
 mount /dev/"${DRIVE}${PVALUE}"2 /mnt
+mkdir -p /mnt/efi
+mount /dev/"$DRIVE$PVALUE"1 /mnt/efi
 
 pacman -Sy --noconfirm archlinux-keyring
 
