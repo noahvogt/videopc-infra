@@ -28,7 +28,8 @@ cd_into() {
 sb_status="$(sbctl status)"
 echo "$sb_status" | grep "^Setup Mode:" | grep -q "Disabled" || error_exit "Error: Secure Boot in Setup Mode. Please change UEFI settings."
 echo "$sb_status" | grep "^Secure Boot:" | grep -q "Enabled" || error_exit "Error: Secure Boot disabled. Please change UEFI settings."
-echo "$sb_status" | grep "^Vendor Keys:" | grep -q "none" || error_exit "Error: Vendor Keys present. Please change UEFI settings."
+# TODO: re-enable this after stopping the rollout of vendor keys
+# echo "$sb_status" | grep "^Vendor Keys:" | grep -q "none" || error_exit "Error: Vendor Keys present. Please change UEFI settings."
 
 grep -q "^2$" /sys/class/tpm/tmp*/tpm_version_major || error_exit "Error: No tpm2 devices found."
 
