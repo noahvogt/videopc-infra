@@ -51,6 +51,8 @@ efibootmgr --create \
     --label "videopc signed efi bundle" \
     --loader /EFI/Linux/ArchBundle.efi
 
+pacman -S linux
+
 # sed -i 's/^\s*GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /etc/default/grub
 # sed -i 's/^\s*GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=0 quiet udev.log_level=3"/' /etc/default/grub
 
