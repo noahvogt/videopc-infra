@@ -26,7 +26,7 @@ mkdir -p /efi/EFI/Linux
 test -d /efi/EFI || error_exit "Error: EFI partition could not be mounted correctly."
 
 # cat /proc/cmdline > /etc/kernel/cmdline
-echo "BOOT_IMAGE=/boot/vmlinuz-linux root=/dev/sda rw loglevel=3 quiet" > /etc/kernel/cmdline
+echo "BOOT_IMAGE=/boot/vmlinuz-linux root=/dev/sda2 rw loglevel=3 quiet" > /etc/kernel/cmdline
 chmod +w /etc/kernel/cmdline
 
 sb_status="$(sbctl status)"
