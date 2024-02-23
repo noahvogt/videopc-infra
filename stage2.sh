@@ -40,7 +40,7 @@ sed -i 's/base udev/base systemd/' /etc/mkinitcpio.conf
 sed -i 's/keyboard keymap consolefont/keyboard sd-vconsole/' /etc/mkinitcpio.conf
 
 sda2_uuid="$(blkid | grep sda2 | tr ' ' '\n' | grep ^UUID= | sed 's/^UUID="//; s/"//')"
-sed -i "s/cryptdevice=/dev/sda2:cryptroot/rd.luks.name=$sda2_uuid=cryptroot/" /etc/kernel/cmdline
+sed -i "s/cryptdevice=\/dev\/sda2:cryptroot/rd.luks.name=$sda2_uuid=cryptroot/" /etc/kernel/cmdline
 
 mkinitcpio -P || error_exit "Error: Failed to update mkinitcpio"
 
