@@ -38,6 +38,10 @@ systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+7 /dev/sda2 || error_exit "
 sed -i 's/block encrypt/block sd-encrypt/' /etc/mkinitcpio.conf
 sed -i 's/base udev/base systemd/' /etc/mkinitcpio.conf
 sed -i 's/keyboard keymap consolefont/keyboard sd-vconsole/' /etc/mkinitcpio.conf
+
+sda2_uuid="$(blkid | grep sda2 | tr ' ' '\n' | grep ^UUID= | sed 's/^UUID="//; s/"//')"
+sed -i "s/cryptdevice=/dev/sda2:cryptroot/rd.luks.name=$sda2_uuid=cryptroot/" /etc/kernel/cmdline
+
 mkinitcpio -P || error_exit "Error: Failed to update mkinitcpio"
 
 # install git, vim, stow, opendoas and (base-devel minus sudo)
