@@ -25,8 +25,12 @@ systemctl enable NetworkManager
 mkdir -p /efi/EFI/Linux
 test -d /efi/EFI || error_exit "Error: EFI partition could not be mounted correctly."
 
-# cat /proc/cmdline > /etc/kernel/cmdline
-echo "BOOT_IMAGE=/boot/vmlinuz-linux root=/dev/sda2 rw loglevel=3 quiet" > /etc/kernel/cmdline
+sed -i 's/block filesystems/block encrypt filesystems/' /etc/mkinitcpio.conf
+mkinitcpio -p linux
+
+root_uuid="$(grep UUID /etc/fstab | sed 's/^UUID=//; s/\s\/.*$//')"
+
+echo "BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=$root_uuid rw cryptdevice=/dev/sda2:cryptroot loglevel=0 quiet udev.log_level=3" > /etc/kernel/cmdline
 chmod +w /etc/kernel/cmdline
 
 sb_status="$(sbctl status)"
@@ -51,12 +55,6 @@ efibootmgr --create \
     --label "videopc signed efi bundle" \
     --loader /EFI/Linux/ArchBundle.efi
 
-pacman -S linux
-
-# sed -i 's/^\s*GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/' /etc/default/grub
-# sed -i 's/^\s*GRUB_CMDLINE_LINUX_DEFAULT="loglevel=3 quiet"/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=0 quiet udev.log_level=3"/' /etc/default/grub
-
-# grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=grub /dev/"${DRIVE}" --recheck
-# grub-mkconfig -o /boot/grub/grub.cfg
+mkinitcpio -p linux
 
 rm drive
