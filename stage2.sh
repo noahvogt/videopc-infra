@@ -34,6 +34,11 @@ grep -q "^2$" /sys/class/tpm/tmp*/tpm_version_major || error_exit "Error: No tpm
 
 systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+7 /dev/sda2 || error_exit "Error: Failed to enroll luks2 key into tpm2"
 
+sed -i 's/block encrypt/block sd-encrypt/' /etc/mkinitcpio.conf
+sed -i 's/base udev/base systemd/' /etc/mkinitcpio.conf
+sed -i 's/keyboard keymap consolefont/keyboard sd-vconsole/' /etc/mkinitcpio.conf
+mkinitcpio -P || error_exit "Error: Failed to update mkinitcpio"
+
 # install git, vim, stow, opendoas and (base-devel minus sudo)
 echo -e "\e[0;30;34mInstalling some initial packages ...\e[0m"
 pacman -Sy --noconfirm --needed git vim opendoas autoconf automake binutils bison fakeroot file findutils flex gawk gcc gettext grep groff gzip libtool m4 make pacman patch pkgconf sed texinfo which libxft stow || error_exit "Error at script start:\n\nAre you sure you're running this as the root user?\n\t(Tip: run 'whoami' to check)\n\nAre you sure you have an internet connection?\n\t(Tip: run 'ip a' to check)\n\e[0m"
