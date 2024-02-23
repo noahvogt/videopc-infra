@@ -47,7 +47,7 @@ sbctl bundle -s \
 
 sbctl create-keys
 sbctl generate-bundles --sign
-sbctl enroll-keys
+sbctl enroll-keys -m
 
 efibootmgr --create \
     --disk /dev/"$DRIVE" \
