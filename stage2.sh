@@ -31,7 +31,7 @@ echo "$sb_status" | grep "^Secure Boot:" | grep -q "Enabled" || error_exit "Erro
 # TODO: re-enable this after stopping the rollout of vendor keys
 # echo "$sb_status" | grep "^Vendor Keys:" | grep -q "none" || error_exit "Error: Vendor Keys present. Please change UEFI settings."
 
-grep -q "^2$" /sys/class/tpm/tmp*/tpm_version_major || error_exit "Error: No tpm2 devices found."
+grep -q "^2$" /sys/class/tpm/tpm*/tpm_version_major || error_exit "Error: No tpm2 devices found."
 
 systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+7 /dev/sda2 || error_exit "Error: Failed to enroll luks2 key into tpm2"
 
