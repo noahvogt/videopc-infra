@@ -34,14 +34,16 @@ echo "$sb_status" | grep "^Secure Boot:" | grep -q "Enabled" || error_exit "Erro
 
 grep -q "^2$" /sys/class/tpm/tpm*/tpm_version_major || error_exit "Error: No tpm2 devices found."
 
-systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+7 /dev/sda2 || error_exit "Error: Failed to enroll luks2 key into tpm2"
+drive2_uuid="$(sed 's/^.*cryptdevice=//; s/:cryptroot.*$//' /etc/kernel/cmdline)"
+drive2_drive="$(blkid | grep "$drive2_uuid" | tr ' ' '\n' | grep '^.*:$' | sed 's/://')"
+
+systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+7 "$drive2_drive" || error_exit "Error: Failed to enroll luks2 key into tpm2"
 
 sed -i 's/block encrypt/block sd-encrypt/' /etc/mkinitcpio.conf
 sed -i 's/base udev/base systemd/' /etc/mkinitcpio.conf
 sed -i 's/keyboard keymap consolefont/keyboard sd-vconsole/' /etc/mkinitcpio.conf
 
-sda2_uuid="$(blkid | grep sda2 | tr ' ' '\n' | grep ^UUID= | sed 's/^UUID="//; s/"//')"
-sed -i "s/cryptdevice=\/dev\/sda2:cryptroot/rd.luks.name=$sda2_uuid=cryptroot/" /etc/kernel/cmdline
+sed -i "s/cryptdevice=$drive2_uuid:cryptroot/rd.luks.name=$drive2_uuid=cryptroot/" /etc/kernel/cmdline
 
 mkinitcpio -P || error_exit "Error: Failed to update mkinitcpio"
 
@@ -149,7 +151,7 @@ systemctl enable mediamtx
 
 make_user_owner_of_HOME_and_mnt_dirs
 
-# setup autologin
+# setup user autologin
 echo -e "\e[0;30;34mSetting up Autologin ...\e[0m"
 systemctl enable greetd
 echo '[initial_session]
@@ -159,3 +161,7 @@ user = "videopc"' >> /etc/greetd/config.toml
 # enable sshd daemon
 echo -e "\e[0;30;34mEnabling sshd daemon ...\e[0m"
 systemctl enable sshd
+
+# remove root autologin
+echo -e "\e[0;30;34mRemoving root autologin ...\e[0m"
+rm -rf /etc/systemd/system/getty@tty1.service.d

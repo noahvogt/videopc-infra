@@ -56,15 +56,12 @@ mount /dev/"$DRIVE"1 /mnt/efi
 
 pacman -Sy --noconfirm archlinux-keyring
 
-pacstrap /mnt base linux linux-firmware networkmanager sbctl amd-ucode efibootmgr cryptsetup tpm2-tss
+pacstrap /mnt base linux-hardened linux-firmware networkmanager sbctl amd-ucode efibootmgr tpm2-tss
 
 genfstab -U /mnt >> /mnt/etc/fstab
 mv drive /mnt
 mv videopc_api_key videopc_rtmp_key /mnt/etc
 echo "videopc" > /mnt/etc/hostname
 
-cp chroot.sh /mnt
+cp chroot.sh stage2.sh /mnt
 arch-chroot /mnt bash chroot.sh
-rm /mnt/chroot.sh
-
-cp stage2.sh /mnt

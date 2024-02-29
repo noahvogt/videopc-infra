@@ -3,6 +3,6 @@
 while true; do
     mpv "$(~/.local/bin/get-pulpit-device)" --no-cache --untimed \
         --no-demuxer-thread --video-sync=audio --vd-lavc-threads=1 \
-        --no-resume-playback --title="pulpit_in"
-        sleep 0.5
+        --no-resume-playback --title="pulpit_in" --fs --hwdec=auto
+        sleep 0.1
 done

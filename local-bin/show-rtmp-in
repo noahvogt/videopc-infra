@@ -5,6 +5,6 @@ RTMP_KEY="$(cat /etc/videopc_rtmp_key)"
 while true; do
     mpv rtmp://localhost:1935/live/"$RTMP_KEY" --no-cache --untimed \
         --no-demuxer-thread --video-sync=audio --vd-lavc-threads=1 \
-        --no-resume-playback --title="rtmp_in"
-        sleep 0.5
+        --no-resume-playback --title="rtmp_in" --fs --hwdec=auto
+        sleep 0.1
 done
