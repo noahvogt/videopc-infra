@@ -13,6 +13,9 @@ read -rp "Press any key to continue"
 
 dialog --no-cancel --inputbox "Enter the drive you want do install Arch Linux for the VIDEOPC on." 10 60 2>drive
 
+dialog --no-cancel --inputbox "Enter the RTMP key (only alphanumeric values allowed):" 10 60 2> videopc_rtmp_key
+dialog --no-cancel --inputbox "Enter the API key (only alphanumeric values allowed):" 10 60 2> videopc_api_key
+
 test -d /sys/firmware/efi/efivars || error_exit "Error: Please boot in UEFI mode. No efi vars detected."
 
 DRIVE=$(cat drive)
@@ -57,6 +60,7 @@ pacstrap /mnt base linux linux-firmware networkmanager sbctl amd-ucode efibootmg
 
 genfstab -U /mnt >> /mnt/etc/fstab
 mv drive /mnt
+mv videopc_api_key videopc_rtmp_key /mnt/etc
 echo "videopc" > /mnt/etc/hostname
 
 cp chroot.sh /mnt

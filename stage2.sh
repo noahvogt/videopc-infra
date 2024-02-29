@@ -2,9 +2,10 @@
 
 # ASSUMED STATE OF TARGET SYSTEM:
 # - internet access
-# - root user login
+# - root user login (tty)
 # - ~10 GB of free disk space
-# working 1.) base 2.) linux/kernel packages
+# - secussfully installed stage1
+# - changed firmware settings
 
 error_exit() {
     echo -e "\e[0;30;101m $1\e[0m"
@@ -70,26 +71,6 @@ create_videopc_user() {
     done
 }
 
-set_rtmp_key() {
-    echo -e "\e[0;30;34mSetting rtmp key... \e[0m"
-    while true; do
-    echo -e "\e[0;30;42m Enter in your RTMP key \e[0m"
-    read -rp " >>> " rtmp_key
-        echo "$rtmp_key" > /etc/videopc_rtmp_key
-        [ -n "$rtmp_key" ] && break
-    done
-}
-
-set_api_key() {
-    echo -e "\e[0;30;34mSetting api key... \e[0m"
-    while true; do
-    echo -e "\e[0;30;42m Enter in your API key \e[0m"
-    read -rp " >>> " api_key
-        echo "$api_key" > /etc/videopc_api_key
-        [ -n "$api_key" ] && break
-    done
-}
-
 add_user_to_groups() {
     if ! groups "$username" | grep "input" | grep -q "video"; then
         echo -e "\e[0;30;34mAdding $username to video and input groups ... \e[0m"
@@ -105,12 +86,17 @@ make_user_owner_of_HOME_and_mnt_dirs() {
     chown -R "$username":users /mnt/
 }
 
+aur_build() {
+    cd_into /home/"$username"/.local/src
+    git clone https://aur.archlinux.org/"$1".git
+    cd_into "$1"
+    doas -u "$username" makepkg --noconfirm -si || exit 1
+}
+
 create_videopc_user
 
 # create ~/ directories
 echo -e "\e[0;30;34mCreating ~/ directories ...\e[0m"
-mkdir -vp /home/"$username"/dox /home/"$username"/pix /home/"$username"/dl
-mkdir -vp /home/"$username"/vids /home/"$username"/mus
 mkdir -vp /home/"$username"/.local/bin /home/"$username"/.config
 mkdir -vp /home/"$username"/.local/share /home/"$username"/.local/src
 
@@ -128,17 +114,6 @@ if ! grep -q "^\s*\[xdg-repo\]\s*$" /etc/pacman.conf; then
     pacman-key --lsign-key 7FA7BB604F2A4346
     echo "[xdg-repo]
 Server = https://noahvogt.com/\$repo/\$arch" >> /etc/pacman.conf
-fi
-
-# add chaotic-aur
-if ! grep -q "^\s*\[chaotic-aur\]\s*$" /etc/pacman.conf; then
-    echo -e "\e[0;30;34mAdding the chaotic aur repo ...\e[0m"
-    pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-    pacman-key --lsign-key 3056513887B78AEB
-    pacman -U --noconfirm --needed 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
-    pacman -U --noconfirm --needed 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst'
-    echo "[chaotic-aur]
-Include = /etc/pacman.d/chaotic-mirrorlist" >> /etc/pacman.conf
 fi
 
 # fetch + apply dotfiles
@@ -160,16 +135,13 @@ cd_into /home/"$username"/.local/src/dotfiles
 echo -e "\e[0;30;34mApplying dotfiles ...\e[0m"
 doas -u "$username" /home/"$username"/.local/src/dotfiles/apply-dotfiles
 
-set_rtmp_key
-set_api_key
-
 # download packages from the official repos
 echo -e "\e[0;30;34mInstalling packages from repos ...\e[0m"
-pacman -Sy --noconfirm --needed neovim ffmpeg pulseaudio-alsa mpv xf86-video-amdgpu xf86-video-intel xf86-video-nouveau coreutils curl hyprland kitty opendoas-sudo adwaita-fake-cursors greetd-agreety openssh uvicorn python-fastapi paru || pacman_error_exit
+pacman -Sy --noconfirm --needed neovim pulseaudio-alsa mpv xf86-video-amdgpu xf86-video-intel xf86-video-nouveau curl hyprland kitty opendoas-sudo adwaita-fake-cursors greetd-agreety openssh uvicorn python-fastapi || pacman_error_exit
 
 # install aur packages
 echo -e "\e[0;30;34mInstalling packages from AUR ...\e[0m"
-doas -u "$username" paru -S --noconfirm --needed mediamtx-bin || pacman_error_exit
+aur_build mediamtx-bin || pacman_error_exit
 
 # enable mediamtx service
 echo -e "\e[0;30;34mEnabling mediamtx daemon ...\e[0m"
@@ -180,21 +152,10 @@ make_user_owner_of_HOME_and_mnt_dirs
 # setup autologin
 echo -e "\e[0;30;34mSetting up Autologin ...\e[0m"
 systemctl enable greetd
-if ! grep -q "\[initial_session\]" /etc/greetd/config.toml; then
-    echo '[initial_session]
-command = "Hyprland"
+echo '[initial_session]
+command = "Hyprland > /dev/null 2> /dev/null"
 user = "videopc"' >> /etc/greetd/config.toml
-fi
 
 # enable sshd daemon
 echo -e "\e[0;30;34mEnabling sshd daemon ...\e[0m"
 systemctl enable sshd
-
-# ~ cleanup
-echo -e "\e[0;30;34mCleaning up \$HOME ...\e[0m"
-for f in /home/"$username"/.bash*; do
-    [ -f "$f" ] && rm "$f"
-done
-for f in /home/"$username"/.less*; do
-    [ -f "$f" ] && rm "$f"
-done
