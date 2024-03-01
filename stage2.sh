@@ -68,9 +68,6 @@ create_videopc_user() {
     echo -e "\e[0;30;34mCreating videopc user ...\e[0m"
     username="videopc"
     useradd -m -g users -G wheel "$username"
-    while true; do
-        passwd "$username" && break
-    done
 }
 
 add_user_to_groups() {
@@ -90,7 +87,7 @@ make_user_owner_of_HOME_and_mnt_dirs() {
 
 aur_build() {
     cd_into /home/"$username"/.local/src
-    git clone https://aur.archlinux.org/"$1".git
+    doas -u "$username" git clone https://aur.archlinux.org/"$1".git
     cd_into "$1"
     doas -u "$username" makepkg --noconfirm -si || exit 1
 }
@@ -165,3 +162,5 @@ systemctl enable sshd
 # remove root autologin
 echo -e "\e[0;30;34mRemoving root autologin ...\e[0m"
 rm -rf /etc/systemd/system/getty@tty1.service.d
+
+systemctl reboot --firmware

@@ -42,7 +42,7 @@ partprobe
 mkfs.fat -F32 /dev/"$DRIVE"1
 
 while true; do
-    cryptsetup luksFormat --type luks2 /dev/"$DRIVE"2 && break
+    cryptsetup luksFormat -q /dev/"$DRIVE"2 && break
 done
 
 while true; do
@@ -65,3 +65,5 @@ echo "videopc" > /mnt/etc/hostname
 
 cp chroot.sh stage2.sh /mnt
 arch-chroot /mnt bash chroot.sh
+
+systemctl reboot --firmware
