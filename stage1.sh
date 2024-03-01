@@ -56,7 +56,7 @@ mount /dev/"$DRIVE"1 /mnt/efi
 
 pacman -Sy --noconfirm archlinux-keyring
 
-pacstrap /mnt base linux-hardened linux-firmware networkmanager sbctl amd-ucode efibootmgr tpm2-tss
+pacstrap /mnt base linux linux-firmware networkmanager sbctl amd-ucode efibootmgr tpm2-tss
 
 genfstab -U /mnt >> /mnt/etc/fstab
 mv drive /mnt
