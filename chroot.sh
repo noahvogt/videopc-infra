@@ -31,7 +31,7 @@ mkinitcpio -P
 root_uuid="$(grep ext4 /etc/fstab | sed 's/^UUID=//; s/\s\/.*$//')"
 drive2_uuid="$(blkid | grep "$DRIVE"2 | tr ' ' '\n' | grep ^UUID= | sed 's/^UUID="//; s/"//')"
 
-echo "BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=$root_uuid rw cryptdevice=$/dev/sda2:cryptroot loglevel=0 quiet udev.log_level=3" > /etc/kernel/cmdline
+echo "BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=$root_uuid rw cryptdevice=/dev/sda2:cryptroot loglevel=0 quiet udev.log_level=3" > /etc/kernel/cmdline
 chmod +w /etc/kernel/cmdline
 
 sb_status="$(sbctl status)"
@@ -59,3 +59,5 @@ efibootmgr --create \
 mkinitcpio -P
 
 rm drive
+
+systemctl reboot --firmware
