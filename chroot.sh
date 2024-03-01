@@ -30,7 +30,7 @@ sed -i 's/block filesystems/block encrypt filesystems/' /etc/mkinitcpio.conf
 root_uuid="$(grep ext4 /etc/fstab | sed 's/^UUID=//; s/\s\/.*$//')"
 drive2_uuid="$(blkid | grep "$DRIVE"2 | tr ' ' '\n' | grep ^UUID= | sed 's/^UUID="//; s/"//')"
 
-echo "pti=on page_alloc.shuffle=1 BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=$root_uuid rw cryptdevice=UUID=$drive2_uuid:cryptroot loglevel=0 quiet udev.log_level=3" > /etc/kernel/cmdline
+echo "pti=on page_alloc.shuffle=1 BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=$root_uuid rw cryptdevice=UUID=$drive2_uuid:cryptroot loglevel=7" > /etc/kernel/cmdline
 chmod +w /etc/kernel/cmdline
 
 sb_status="$(sbctl status)"

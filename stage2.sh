@@ -64,6 +64,9 @@ create_videopc_user() {
     if ls /home/ | grep -q "^$username$"; then
         return
     fi
+    while true; do
+        passwd && break
+    done
 
     echo -e "\e[0;30;34mCreating videopc user ...\e[0m"
     username="videopc"
