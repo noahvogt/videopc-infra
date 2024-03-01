@@ -141,7 +141,7 @@ doas -u "$username" /home/"$username"/.local/src/dotfiles/apply-dotfiles
 
 # download packages from the official repos
 echo -e "\e[0;30;34mInstalling packages from repos ...\e[0m"
-pacman -Sy --noconfirm --needed neovim pulseaudio-alsa mpv xf86-video-amdgpu xf86-video-intel xf86-video-nouveau curl hyprland kitty opendoas-sudo adwaita-fake-cursors greetd-agreety openssh uvicorn python-fastapi adobe-source-code-pro-fonts || pacman_error_exit
+pacman -Sy --noconfirm --needed neovim pulseaudio-alsa mpv xf86-video-amdgpu xf86-video-intel xf86-video-nouveau curl hyprland foot opendoas-sudo adwaita-fake-cursors greetd-agreety openssh uvicorn python-fastapi adobe-source-code-pro-fonts || pacman_error_exit
 
 # install aur packages
 echo -e "\e[0;30;34mInstalling packages from AUR ...\e[0m"
