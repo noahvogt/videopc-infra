@@ -48,13 +48,13 @@ sbctl bundle -s \
 
 sbctl create-keys
 sbctl generate-bundles --sign
-sbctl enroll-keys -m
+sbctl enroll-keys -m || error_exit "Error: Could not enroll secure boot keys to UEFI."
 
 efibootmgr --create \
     --disk /dev/"$DRIVE" \
     --part 1 \
     --label "videopc signed efi bundle" \
-    --loader /EFI/Linux/ArchBundle.efi
+    --loader /EFI/Linux/ArchBundle.efi || error_exit "Error: Could not create efi boot entry."
 
 mkinitcpio -P
 

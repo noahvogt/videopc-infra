@@ -43,7 +43,7 @@ sed -i 's/block encrypt/block sd-encrypt/' /etc/mkinitcpio.conf
 sed -i 's/base udev/base systemd/' /etc/mkinitcpio.conf
 sed -i 's/keyboard keymap consolefont/keyboard sd-vconsole/' /etc/mkinitcpio.conf
 
-sed -i "s/cryptdevice=$drive2_uuid:cryptroot/rd.luks.name=$drive2_uuid=cryptroot/" /etc/kernel/cmdline
+sed -i "s/cryptdevice=UUID=$drive2_uuid:cryptroot/rd.luks.name=$drive2_uuid=cryptroot/" /etc/kernel/cmdline
 
 mkinitcpio -P || error_exit "Error: Failed to update mkinitcpio"
 

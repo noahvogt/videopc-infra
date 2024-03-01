@@ -64,6 +64,6 @@ mv videopc_api_key videopc_rtmp_key /mnt/etc
 echo "videopc" > /mnt/etc/hostname
 
 cp chroot.sh stage2.sh /mnt
-arch-chroot /mnt bash chroot.sh
+arch-chroot /mnt bash chroot.sh || exit 1
 
 systemctl reboot --firmware
