@@ -57,7 +57,4 @@ efibootmgr --create \
 
 mkinitcpio -P
 
-sbctl ls
-error_exit "Error: Test Error."
-
 rm drive
