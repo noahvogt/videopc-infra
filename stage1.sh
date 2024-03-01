@@ -63,7 +63,9 @@ mv drive /mnt
 mv videopc_api_key videopc_rtmp_key /mnt/etc
 echo "videopc" > /mnt/etc/hostname
 
-cp chroot.sh stage2.sh /mnt
-arch-chroot /mnt bash chroot.sh || exit 1
+curl -LO https://raw.githubusercontent.com/noahvogt/videopc-infra/master/chroot.sh --output-dir /mnt
+curl -LO https://raw.githubusercontent.com/noahvogt/videopc-infra/master/stage2.sh --output-dir /mnt || error_exit "Error: Failed to install stage2 script."
+arch-chroot /mnt bash chroot.sh || error_exit "Error: Installation failed."
+rm /mnt/chroot.sh
 
 systemctl reboot --firmware
