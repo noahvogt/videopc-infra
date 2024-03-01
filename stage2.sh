@@ -64,13 +64,15 @@ create_videopc_user() {
     if ls /home/ | grep -q "^$username$"; then
         return
     fi
-    while true; do
-        passwd "$username" && break
-    done
 
     echo -e "\e[0;30;34mCreating videopc user ...\e[0m"
     username="videopc"
     useradd -m -g users -G wheel "$username"
+
+    # TODO: remove
+    while true; do
+        passwd "$username" && break
+    done
 }
 
 add_user_to_groups() {
