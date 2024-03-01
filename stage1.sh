@@ -8,8 +8,8 @@ error_exit() {
 pacman -Sy --noconfirm dialog || error_exit "Error at script start:\n\nAre you sure you're running this as the root user?\n\t(Tip: run 'whoami' to check)\n\nAre you sure you have an internet connection?\n\t(Tip: run 'ip a' to check)\n"
 
 clear
-lsblk -d | sed 's/0 disk/0 disk\\n/;s/POINT/POINT\\n/'
-read -rp "Press any key to continue"
+lsblk
+read -rp "After deciding which drive to install the system on, press any key to continue"
 
 dialog --no-cancel --inputbox "Enter the drive you want do install Arch Linux for the VIDEOPC on." 10 60 2>drive
 
@@ -56,7 +56,7 @@ mount /dev/"$DRIVE"1 /mnt/efi
 
 pacman -Sy --noconfirm archlinux-keyring
 
-pacstrap /mnt base linux-hardened linux-firmware networkmanager sbctl amd-ucode efibootmgr tpm2-tss
+pacstrap /mnt base linux linux-firmware networkmanager sbctl amd-ucode efibootmgr tpm2-tss
 
 genfstab -U /mnt >> /mnt/etc/fstab
 mv drive /mnt
