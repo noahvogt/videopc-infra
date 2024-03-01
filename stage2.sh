@@ -34,7 +34,7 @@ echo "$sb_status" | grep "^Secure Boot:" | grep -q "Enabled" || error_exit "Erro
 
 grep -q "^2$" /sys/class/tpm/tpm*/tpm_version_major || error_exit "Error: No tpm2 devices found."
 
-drive2_uuid="$(sed 's/^.*cryptdevice=//; s/:cryptroot.*$//' /etc/kernel/cmdline)"
+drive2_uuid="$(sed 's/^.*cryptdevice=UUID=//; s/:cryptroot.*$//' /etc/kernel/cmdline)"
 drive2_drive="$(blkid | grep "$drive2_uuid" | tr ' ' '\n' | grep '^.*:$' | sed 's/://')"
 
 systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+7 "$drive2_drive" || error_exit "Error: Failed to enroll luks2 key into tpm2"

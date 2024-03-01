@@ -31,7 +31,7 @@ mkinitcpio -P
 root_uuid="$(grep ext4 /etc/fstab | sed 's/^UUID=//; s/\s\/.*$//')"
 drive2_uuid="$(blkid | grep "$DRIVE"2 | tr ' ' '\n' | grep ^UUID= | sed 's/^UUID="//; s/"//')"
 
-echo "BOOT_IMAGE=/boot/vmlinuz-linux root=UUID=$root_uuid rw cryptdevice=UUID=$drive2_uuid:cryptroot loglevel=0 quiet udev.log_level=3" > /etc/kernel/cmdline
+echo "BOOT_IMAGE=/boot/vmlinuz-linux-hardened root=UUID=$root_uuid rw cryptdevice=UUID=$drive2_uuid:cryptroot loglevel=0 quiet udev.log_level=3" > /etc/kernel/cmdline
 chmod +w /etc/kernel/cmdline
 
 sb_status="$(sbctl status)"
@@ -41,8 +41,8 @@ echo "$sb_status" | grep "^Vendor Keys:" | grep -q "none" || error_exit "Error: 
 
 sbctl bundle -s \
     -a /boot/amd-ucode.img \
-    -k /boot/vmlinuz-linux\
-    -f /boot/initramfs-linux.img \
+    -k /boot/vmlinuz-linux-hardened \
+    -f /boot/initramfs-linux-hardened.img \
     -c /etc/kernel/cmdline \
     /efi/EFI/Linux/ArchBundle.efi
 
