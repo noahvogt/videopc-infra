@@ -1,0 +1,5 @@
+#!/bin/sh
+
+rfkill block bluetooth
+modprobe -r usbhid
+modprobe -r i2c_hid_acpi
